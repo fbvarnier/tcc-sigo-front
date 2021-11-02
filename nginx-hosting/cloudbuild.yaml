@@ -23,7 +23,7 @@ steps:
   id: build-image
   waitFor:
   - pull-image
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/sigo-front', '.']
+  args: ['build', '-f', 'nginx-hosting/Dockerfile', '-t', 'gcr.io/$PROJECT_ID/sigo-front', '.']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: upload-image
