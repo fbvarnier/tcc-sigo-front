@@ -1,0 +1,55 @@
+steps:
+- name: 'node'
+  id: npm-install
+  entrypoint: 'npm'
+  args: ['install']
+
+- name: 'node'
+  id: npm-build
+  entrypoint: 'npm'
+  args: ['run','build']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: pull-image 
+  entrypoint: 'bash'
+  args: [
+   '-c', 
+   'docker pull gcr.io/$PROJECT_ID/sigo-front:latest || exit 0'
+  ]
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: build-image
+  waitFor:
+  - pull-image
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/sigo-front', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: upload-image
+  waitFor:
+  - build-image
+  args: ['push', 'us.gcr.io/$PROJECT_ID/sigo-front']
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: apply-config
+  waitFor:
+  - upload-image
+  args: ['apply', '-f', 'k8s/']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=southamerica-east1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=kube-cluster-tcc'
+  - 'API_URL=$API_BACK'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: deploy-kube
+  waitFor:
+  - apply-config
+  args: ['set', 'image', 'deployment.apps/sigo-front-deployment', 'sigo-front=gcr.io/$PROJECT_ID/sigo-front:$COMMIT_SHA']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=southamerica-east1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=kube-cluster-tcc'
+
+images: [
+  'gcr.io/$PROJECT_ID/sigo-front:$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/sigo-front:latest',]
+options:
+ logging: CLOUD_LOGGING_ONLY

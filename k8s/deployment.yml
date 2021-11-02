@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: sigo-front
+  name: sigo-front-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: sigo-front
+  template:
+    metadata:
+      labels:
+        run: sigo-front
+    spec:
+      containers:
+      - image: gcr.io/direct-glider-327313/sigo-front:latest
+        name: sigo-front
+        ports:
+        - containerPort: 80
