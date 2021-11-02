@@ -25,16 +25,16 @@ steps:
   - pull-image
   args: ['build', '-f', 'nginx-hosting/Dockerfile', '-t', 'gcr.io/$PROJECT_ID/sigo-front', '.']
 
-- name: 'gcr.io/cloud-builders/docker'
-  id: upload-image
-  waitFor:
-  - build-image
-  args: ['push', 'us.gcr.io/$PROJECT_ID/sigo-front']
+# - name: 'gcr.io/cloud-builders/docker'
+#   id: upload-image
+#   waitFor:
+#   - build-image
+#   args: ['push', 'us.gcr.io/$PROJECT_ID/sigo-front:$COMMIT_SHA']
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: apply-config
   waitFor:
-  - upload-image
+  - build-image
   args: ['apply', '-f', 'k8s/']
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=southamerica-east1-a'
