@@ -39,7 +39,7 @@ steps:
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=southamerica-east1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=kube-cluster-tcc'
-  - 'API_URL=http://35.198.51.5'
+  - 'API_URL=http://192.169.210.55'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: deploy-kube
