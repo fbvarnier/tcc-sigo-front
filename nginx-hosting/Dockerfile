@@ -22,6 +22,6 @@ RUN mkdir -p /usr/share/nginx/www/_ah && \
 # Finally, all static assets.l
 ADD nginx-hosting/dist/ /usr/share/nginx/www/sampleapp
 
-ENV API_URL "http://192.169.210.55"
+ENV API_URL "http://35.198.51.5"
 
 CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/envconfig.template.js > /usr/share/nginx/www/sampleapp/assets/envconfig.js && exec nginx -g 'daemon off;'"]
